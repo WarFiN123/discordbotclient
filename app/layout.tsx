@@ -2,7 +2,61 @@ import type React from "react";
 import "./globals.css";
 
 export const metadata = {
-  generator: "v0.dev",
+  alternates: { canonical: "https://www.uncoverit.org" },
+  title: {
+    default: "Discord Bot Client",
+    template: "Uncover it | %s",
+  },
+  description:
+    "A service that allows you to login as a Discord Bot",
+  keywords: [
+    "Discord",
+    "Discord bot",
+    "Discord client",
+    "Discord API",
+    "Discord.js",
+    "Discord bot client",
+    "Discord bot dashboard",
+    "Discord bot hosting",
+    "Discord bot management",
+    "Discord bot development",
+    "Uncover it",
+  ],
+  openGraph: {
+    title: "Uncover it - Static Malware Config Extractor",
+    description:
+      "A service that allows you to login as a Discord Bot",
+    url: "https://discordbot.uncoverit.org",
+    siteName: "Uncover it",
+    images: [
+      {
+        url: "https://i.postimg.cc/Fz5hSmhB/Opengraph.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large" as const,
+      "max-snippet": -1,
+    },
+  },
+  twitter: {
+    title: "Uncover it",
+    card: "summary_large_image",
+    description:
+      "A service that allows you to login as a Discord Bot",
+    images: ["https://i.postimg.cc/Fz5hSmhB/Opengraph.png"],
+  },
+  icons: { shortcut: "/favicon.ico" },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {

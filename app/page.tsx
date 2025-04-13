@@ -72,7 +72,7 @@ export default function ChatInterface() {
         const lastMessageId = messages[messages.length - 1].id;
         fetchNewMessages(selectedChannel.id, lastMessageId);
       }
-    }, 1000); // Fetch new messages every 2 seconds
+    }, 1000); // Fetch new messages every 1 second
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, [selectedChannel, messages, fetchNewMessages]);
