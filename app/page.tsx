@@ -155,7 +155,13 @@ export default function ChatInterface() {
               />
               <p className="mt-1 text-xs text-zinc-400">
                 Open source on&nbsp;
-                <Link target="_blank" href="https://github.com/WarFiN123/discordbotclient" className="underline hover:text-white">GitHub</Link>
+                <Link
+                  target="_blank"
+                  href="https://github.com/WarFiN123/discordbotclient"
+                  className="underline hover:text-white"
+                >
+                  GitHub
+                </Link>
               </p>
             </div>
             <Button
