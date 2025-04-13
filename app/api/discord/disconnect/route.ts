@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
 import { getActiveClient, removeActiveClient } from "@/lib/discord-client"
 
-export const runtime = 'edge';
-
 export async function POST(req: Request) {
   try {
     const { token } = await req.json()

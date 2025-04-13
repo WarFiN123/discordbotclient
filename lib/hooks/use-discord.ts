@@ -283,6 +283,7 @@ export function useDiscord() {
   // Select a channel and fetch its messages
   const selectChannel = async (channel: Channel) => {
     setSelectedChannel(channel)
+    setError(null); // Clear any existing error when selecting a new channel
     await fetchMessages(channel.id)
   }
 

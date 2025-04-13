@@ -18,11 +18,15 @@ import {
   Paperclip,
   Send,
   Megaphone,
-  Volume2
+  Volume2,
+  ArrowLeftToLine
 } from "lucide-react"
 import { useDiscord, type Channel } from "@/lib/hooks/use-discord"
-import { formatDistanceToNow } from "date-fns"
+import { formatDistanceToNow, set } from "date-fns"
 import Image from 'next/image';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ChatInterface() {
   const {
@@ -47,6 +51,10 @@ export default function ChatInterface() {
   const [botToken, setBotToken] = useState("")
   const [messageInput, setMessageInput] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isServerSidebarOpen, setIsServerSidebarOpen] = useState(false);
+  const [isChannelSidebarOpen, setIsChannelSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -122,6 +130,10 @@ export default function ChatInterface() {
     (channel) => channel.type !== "category" && !channel.parentId
   );
 
+  useEffect(() => {
+    // Removed swipe gesture logic
+  }, []);
+
   // Login screen
   if (!isConnected) {
     return (
@@ -135,7 +147,6 @@ export default function ChatInterface() {
             <div>
               <label className="block text-sm font-medium text-zinc-300 mb-1">Bot Token</label>
               <Input
-                type="password"
                 placeholder="Enter your bot token"
                 value={botToken}
                 onChange={(e) => setBotToken(e.target.value)}
@@ -165,9 +176,123 @@ export default function ChatInterface() {
 
   // Chat interface with sidebars
   return (
-    <div className="flex h-full">
-      {/* Server List Sidebar */}
-      <div className="w-[72px] bg-zinc-950 flex flex-col items-center py-3 gap-3">
+    // Adjust the layout and styles for better mobile responsiveness
+    <div className={`flex flex-col h-full ${isMobile ? "" : "md:flex-row"}`}>
+      {/* Server List Sidebar for Mobile */}
+      {isMobile && isServerSidebarOpen && (
+        <div className="absolute inset-0 z-50 bg-zinc-950 flex flex-col items-center py-3 gap-3 overflow-y-auto">
+          <button
+            className="absolute top-4 right-4 text-white"
+            onClick={() => setIsServerSidebarOpen(false)}
+          >
+            Close
+          </button>
+          <h2 className="text-white text-lg font-semibold mb-4">Select a Server</h2>
+          {servers.map((server) => (
+            <div
+              key={server.id}
+              onClick={() => {
+                selectServer(server);
+                setIsServerSidebarOpen(false);
+              }}
+              className={`h-12 w-12 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transition-all ${
+                selectedServer?.id === server.id ? "bg-indigo-600" : "bg-zinc-800 hover:bg-indigo-500"
+              }`}
+            >
+              {server.icon ? (
+                <Image
+                  src={server.icon || "/placeholder.svg"}
+                  alt={server.name}
+                  className="h-12 w-12 rounded-full object-cover"
+                  width={48}
+                  height={48}
+                />
+              ) : (
+                server.name.substring(0, 2).toUpperCase()
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Channel List Sidebar for Mobile */}
+      {isMobile && isChannelSidebarOpen && (
+        <div className="absolute inset-0 z-50 bg-zinc-800 flex flex-col">
+          <button
+            className="absolute top-4 right-4 text-white"
+            onClick={() => setIsChannelSidebarOpen(false)}
+          >
+            Close
+          </button>
+          <div className="h-12 border-b border-zinc-900 px-4 flex items-center justify-between">
+            <button
+              className="text-white text-sm bg-indigo-600 px-2 py-1 rounded hover:bg-indigo-700"
+              onClick={() => {
+                setIsChannelSidebarOpen(false);
+                setIsServerSidebarOpen(true);
+              }}
+            >
+              Select Server
+            </button>
+          </div>
+          <ScrollArea className="flex-1">
+            <div className="p-2 space-y-4">
+              {sortedCategories.map((category) => (
+                <div key={category.id} className="space-y-1">
+                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">{category.name}</h3>
+                  <div className="space-y-1 pl-2">
+                    {category.children.map((channel) => (
+                      <div
+                        key={channel.id}
+                        onClick={() => {
+                          selectChannel(channel);
+                          setIsChannelSidebarOpen(false);
+                        }}
+                        className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
+                          selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                        }`}
+                      >
+                        {channel.type === "text" && <Hash className="h-5 w-5" />}
+                        {channel.type === "voice" && <Volume2 className="h-5 w-5" />}
+                        {channel.type === "announcement" && <Megaphone className="h-5 w-5" />}
+                        <span className="text-xs md:text-sm">{channel.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {uncategorizedChannels.length > 0 && (
+                <div className="space-y-1">
+                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">Channels</h3>
+                  <div className="space-y-1 pl-2">
+                    {uncategorizedChannels
+                      .filter((channel) => channel.type === "text")
+                      .map((channel) => (
+                        <div
+                          key={channel.id}
+                          onClick={() => {
+                            selectChannel(channel);
+                            setIsChannelSidebarOpen(false);
+                          }}
+                          className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
+                            selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                          }`}
+                        >
+                          <Hash className="h-5 w-5" />
+                          <span className="text-xs md:text-sm">{channel.name}</span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      )}
+
+      {/* Server List Sidebar for Desktop */}
+      <div className="hidden md:flex w-[72px] bg-zinc-950 flex-col items-center py-3 gap-3 overflow-x-auto md:overflow-visible">
         {servers.map((server) => (
           <div
             key={server.id}
@@ -191,51 +316,66 @@ export default function ChatInterface() {
         ))}
       </div>
 
-      {/* Channel List Sidebar */}
-      <div className="w-60 bg-zinc-800 flex flex-col">
+      {/* Channel List Sidebar for Desktop */}
+      <div className="hidden md:flex w-60 bg-zinc-800 flex-col">
         <div className="h-12 border-b border-zinc-900 px-4 flex items-center">
-          <h2 className="font-semibold text-white">{selectedServer?.name || "Select a Server"}</h2>
+          <h2
+            className="font-semibold text-white text-sm md:text-base cursor-pointer"
+            onClick={() => {
+              if (isMobile) {
+                setIsServerSidebarOpen(true);
+              }
+            }}
+          >
+            {selectedServer?.name || "Select a Server"}
+          </h2>
         </div>
         <ScrollArea className="flex-1">
           <div className="p-2 space-y-4">
             {sortedCategories.map((category) => (
               <div key={category.id} className="space-y-1">
-                <h3 className="text-sm font-semibold uppercase text-zinc-400 mb-2">{category.name}</h3>
+                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">{category.name}</h3>
                 <div className="space-y-1 pl-2">
                   {category.children.map((channel) => (
-                      <div
-                        key={channel.id}
-                        onClick={() => selectChannel(channel)}
-                        className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
-                          selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
-                        }`}
-                      >
-                        {channel.type === "text" && <Hash className="h-5 w-5" />}
-                        {channel.type === "voice" && <Volume2 className="h-5 w-5" />}
-                        {channel.type === "announcement" && <Megaphone className="h-5 w-5" />}
-                        <span>{channel.name}</span>
-                      </div>
-                    ))}
+                    <div
+                      key={channel.id}
+                      onClick={() => {
+                        selectChannel(channel);
+                        setIsChannelSidebarOpen(false);
+                      }}
+                      className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
+                        selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                      }`}
+                    >
+                      {channel.type === "text" && <Hash className="h-5 w-5" />}
+                      {channel.type === "voice" && <Volume2 className="h-5 w-5" />}
+                      {channel.type === "announcement" && <Megaphone className="h-5 w-5" />}
+                      <span className="text-xs md:text-sm">{channel.name}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             ))}
 
             {uncategorizedChannels.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold uppercase text-zinc-400 mb-2">Channels</h3>
+                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">Channels</h3>
                 <div className="space-y-1 pl-2">
                   {uncategorizedChannels
                     .filter((channel) => channel.type === "text")
                     .map((channel) => (
                       <div
                         key={channel.id}
-                        onClick={() => selectChannel(channel)}
+                        onClick={() => {
+                          selectChannel(channel);
+                          setIsChannelSidebarOpen(false);
+                        }}
                         className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
                           selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
                         }`}
                       >
                         <Hash className="h-5 w-5" />
-                        <span>{channel.name}</span>
+                        <span className="text-xs md:text-sm">{channel.name}</span>
                       </div>
                     ))}
                 </div>
@@ -248,32 +388,20 @@ export default function ChatInterface() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col bg-zinc-700">
         {/* Channel Header */}
-        <header className="h-12 border-b border-zinc-900 px-4 flex items-center justify-between bg-zinc-800">
+        <header className="h-12 border-b border-zinc-900 px-4 flex items-center justify-between bg-zinc-800 fixed top-0 left-0 right-0 z-10 md:relative">
           <div className="flex items-center">
-            <Hash className="h-5 w-5 text-zinc-400 mr-2" />
-            <h2 className="font-semibold text-white">{selectedChannel?.name || "Select a Channel"}</h2>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" onClick={() => setSelectedChannel(null)} className="text-zinc-400 hover:text-white">
-              Back to Channels
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-              <Bell className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-              <Users className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-              <AtSign className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-              <HelpCircle className="h-5 w-5" />
-            </Button>
+            {isMobile && (
+              <ArrowLeftToLine
+                className="h-5 w-5 text-zinc-400 mr-2"
+                onClick={() => setIsChannelSidebarOpen(true)}
+              />
+            )}
+            <h2 className="font-semibold text-white text-sm md:text-base">{selectedChannel?.name || "Select a Channel"}</h2>
           </div>
         </header>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4 overflow-y-auto">
+        <ScrollArea className="flex-1 p-4 overflow-y-auto word-wrap" style={{ maxWidth: `calc(100vw - ${isMobile ? '0px' : '72px + 240px'})` }}>
           {isLoadingMessages ? (
             <div className="flex items-center justify-center h-full">
               <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
@@ -317,7 +445,7 @@ export default function ChatInterface() {
                         </span>
                         <span className="text-xs text-zinc-400">{formatTimestamp(message.timestamp)}</span>
                       </div>
-                      <p className="text-zinc-200 whitespace-pre-wrap">{message.content}</p>
+                      <p className="text-zinc-200 whitespace-pre-wrap word-wrap text-sm md:text-base">{message.content}</p>
 
                       {/* Render attachments if any */}
                       {message.attachments && message.attachments.length > 0 && (
@@ -342,7 +470,7 @@ export default function ChatInterface() {
                                   className="flex items-center gap-2 p-2 bg-zinc-800 rounded-md text-zinc-200 hover:bg-zinc-700"
                                 >
                                   <Paperclip className="h-4 w-4" />
-                                  <span>{attachment.name}</span>
+                                  <span className="text-xs md:text-sm">{attachment.name}</span>
                                 </a>
                               )}
                             </div>
@@ -358,10 +486,10 @@ export default function ChatInterface() {
         </ScrollArea>
 
         {/* Message Input */}
-        <div className="p-4 bg-zinc-800">
+        <div className="p-4 bg-zinc-800 border-t border-zinc-900 w-full">
           <div className="flex items-center gap-2 bg-zinc-700 rounded-lg p-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-              <PlusCircle className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+              <PlusCircle className="h-6 w-6" />
             </Button>
             <Textarea
               placeholder={`Message #${selectedChannel?.name || ""}`}
@@ -369,31 +497,31 @@ export default function ChatInterface() {
               onChange={(e) => setMessageInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault()
-                  handleSendMessage()
+                  e.preventDefault();
+                  handleSendMessage();
                 }
               }}
-              className="min-h-[44px] max-h-32 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white resize-none flex-1"
+              className="min-h-[44px] max-h-32 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 text-white resize-none flex-1 text-sm md:text-base w-full md:w-auto"
               disabled={isSendingMessage}
             />
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-                <Gift className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+                <Gift className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-                <Paperclip className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+                <Paperclip className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white">
-                <Smile className="h-5 w-5" />
+              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+                <Smile className="h-6 w-6" />
               </Button>
               <Button
                 onClick={handleSendMessage}
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 text-zinc-400 hover:text-white"
+                className="h-10 w-10 text-zinc-400 hover:text-white"
                 disabled={isSendingMessage || !messageInput.trim()}
               >
-                {isSendingMessage ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+                {isSendingMessage ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}
               </Button>
             </div>
           </div>

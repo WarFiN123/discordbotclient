@@ -9,7 +9,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <html>
-        <head />
         <body>
             <div className="flex h-screen bg-zinc-900 text-zinc-100">
               {/* Main Content */}
