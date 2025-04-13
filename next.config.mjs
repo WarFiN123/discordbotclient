@@ -27,14 +27,14 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-  webpack: (config) => {
-    config.module.rules.push({
-      test: /\.node$/,
-      use: 'node-loader',
-    });
-
-    return config;
-  },
+  webpack: (config, options) => {
+        config.module.rules.push({
+          test: /\.node/,
+          use: 'node-loader'
+        })
+     
+        return config
+      },
 }
 
 if (userConfig) {
