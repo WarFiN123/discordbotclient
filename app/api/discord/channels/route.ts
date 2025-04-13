@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { ChannelType } from "discord.js"
 import { getActiveClient } from "@/lib/discord-client"
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
   try {
     const { token, serverId } = await req.json()
