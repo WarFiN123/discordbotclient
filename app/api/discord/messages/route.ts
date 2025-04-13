@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server"
-import { getActiveClient } from "@/lib/discord-client"
+import { NextResponse } from "next/server";
+import { getActiveClient } from "@/lib/discord-client";
 
 export async function POST(req: Request) {
   try {
-    const { token, channelId, limit = 50 } = await req.json()
+    const { token, channelId, limit = 50 } = await req.json();
 
     if (!token || !channelId) {
       return NextResponse.json(
@@ -11,24 +11,27 @@ export async function POST(req: Request) {
           error: "Bot token and channel ID are required",
         },
         { status: 400 },
-      )
+      );
     }
 
-    const client = await getActiveClient(token)
+    const client = await getActiveClient(token);
 
     if (!client) {
-      return NextResponse.json({ error: "Bot not connected" }, { status: 404 })
+      return NextResponse.json({ error: "Bot not connected" }, { status: 404 });
     }
 
     // Get the channel
-    const channel = await client.channels.fetch(channelId)
+    const channel = await client.channels.fetch(channelId);
 
     if (!channel || !channel.isTextBased()) {
-      return NextResponse.json({ error: "Text channel not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: "Text channel not found" },
+        { status: 404 },
+      );
     }
 
     // Fetch messages
-    const messages = await channel.messages.fetch({ limit })
+    const messages = await channel.messages.fetch({ limit });
 
     // Format messages
     const formattedMessages = Array.from(messages.values()).map((msg) => ({
@@ -47,11 +50,14 @@ export async function POST(req: Request) {
         name: a.name,
         contentType: a.contentType,
       })),
-    }))
+    }));
 
-    return NextResponse.json({ messages: formattedMessages })
+    return NextResponse.json({ messages: formattedMessages });
   } catch (error) {
-    console.error("Error fetching messages:", error)
-    return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 })
+    console.error("Error fetching messages:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch messages" },
+      { status: 500 },
+    );
   }
 }

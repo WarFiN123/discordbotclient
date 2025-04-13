@@ -1,18 +1,21 @@
-import { NextResponse } from "next/server"
-import { getActiveClient } from "@/lib/discord-client"
+import { NextResponse } from "next/server";
+import { getActiveClient } from "@/lib/discord-client";
 
 export async function POST(req: Request) {
   try {
-    const { token } = await req.json()
+    const { token } = await req.json();
 
     if (!token) {
-      return NextResponse.json({ error: "Bot token is required" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Bot token is required" },
+        { status: 400 },
+      );
     }
 
-    const client = await getActiveClient(token)
+    const client = await getActiveClient(token);
 
     if (!client) {
-      return NextResponse.json({ error: "Bot not connected" }, { status: 404 })
+      return NextResponse.json({ error: "Bot not connected" }, { status: 404 });
     }
 
     // Get all guilds (servers) the bot is in
@@ -23,9 +26,12 @@ export async function POST(req: Request) {
       memberCount: guild.memberCount,
     }));
 
-    return NextResponse.json({ servers: guilds })
+    return NextResponse.json({ servers: guilds });
   } catch (error) {
-    console.error("Error fetching servers:", error)
-    return NextResponse.json({ error: "Failed to fetch servers" }, { status: 500 })
+    console.error("Error fetching servers:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch servers" },
+      { status: 500 },
+    );
   }
 }

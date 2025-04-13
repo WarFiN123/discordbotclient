@@ -1,32 +1,38 @@
-import { NextResponse } from "next/server"
-import { getActiveClient, removeActiveClient } from "@/lib/discord-client"
+import { NextResponse } from "next/server";
+import { getActiveClient, removeActiveClient } from "@/lib/discord-client";
 
 export async function POST(req: Request) {
   try {
-    const { token } = await req.json()
+    const { token } = await req.json();
 
     if (!token) {
-      return NextResponse.json({ error: "Bot token is required" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Bot token is required" },
+        { status: 400 },
+      );
     }
 
-    const client = await getActiveClient(token)
+    const client = await getActiveClient(token);
 
     if (!client) {
-      return NextResponse.json({ error: "Bot not connected" }, { status: 404 })
+      return NextResponse.json({ error: "Bot not connected" }, { status: 404 });
     }
 
     // Disconnect the client
-    client.destroy()
+    client.destroy();
 
     // Remove from active connections
-    removeActiveClient(token)
+    removeActiveClient(token);
 
     return NextResponse.json({
       success: true,
       message: "Bot disconnected successfully",
-    })
+    });
   } catch (error) {
-    console.error("Error disconnecting bot:", error)
-    return NextResponse.json({ error: "Failed to disconnect bot" }, { status: 500 })
+    console.error("Error disconnecting bot:", error);
+    return NextResponse.json(
+      { error: "Failed to disconnect bot" },
+      { status: 500 },
+    );
   }
 }

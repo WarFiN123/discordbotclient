@@ -1,7 +1,7 @@
-import { Client, GatewayIntentBits } from "discord.js"
+import { Client, GatewayIntentBits } from "discord.js";
 
 // Store active bot connections
-const activeConnections = new Map<string, Client>()
+const activeConnections = new Map<string, Client>();
 
 /**
  * Get an active Discord client by token
@@ -9,7 +9,7 @@ const activeConnections = new Map<string, Client>()
 export async function getActiveClient(token: string): Promise<Client | null> {
   // Check if we already have an active connection
   if (activeConnections.has(token)) {
-    return activeConnections.get(token) || null
+    return activeConnections.get(token) || null;
   }
 
   // If not, create a new client and connect
@@ -21,14 +21,14 @@ export async function getActiveClient(token: string): Promise<Client | null> {
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
       ],
-    })
+    });
 
-    await client.login(token)
-    activeConnections.set(token, client)
-    return client
+    await client.login(token);
+    activeConnections.set(token, client);
+    return client;
   } catch (error) {
-    console.error("Failed to connect Discord client:", error)
-    return null
+    console.error("Failed to connect Discord client:", error);
+    return null;
   }
 }
 
@@ -37,19 +37,19 @@ export async function getActiveClient(token: string): Promise<Client | null> {
  */
 export function removeActiveClient(token: string): boolean {
   if (activeConnections.has(token)) {
-    const client = activeConnections.get(token)
+    const client = activeConnections.get(token);
     if (client) {
-      client.destroy()
+      client.destroy();
     }
-    activeConnections.delete(token)
-    return true
+    activeConnections.delete(token);
+    return true;
   }
-  return false
+  return false;
 }
 
 /**
  * Get all active clients
  */
 export function getAllActiveClients(): Map<string, Client> {
-  return activeConnections
+  return activeConnections;
 }

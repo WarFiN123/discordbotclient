@@ -7,8 +7,7 @@ export const metadata = {
     default: "Discord Bot Client",
     template: "Uncover it | %s",
   },
-  description:
-    "A service that allows you to login as a Discord Bot",
+  description: "A service that allows you to login as a Discord Bot",
   keywords: [
     "Discord",
     "Discord bot",
@@ -24,8 +23,7 @@ export const metadata = {
   ],
   openGraph: {
     title: "Uncover it - Static Malware Config Extractor",
-    description:
-      "A service that allows you to login as a Discord Bot",
+    description: "A service that allows you to login as a Discord Bot",
     url: "https://discordbot.uncoverit.org",
     siteName: "Uncover it",
     images: [
@@ -52,8 +50,7 @@ export const metadata = {
   twitter: {
     title: "Uncover it",
     card: "summary_large_image",
-    description:
-      "A service that allows you to login as a Discord Bot",
+    description: "A service that allows you to login as a Discord Bot",
     images: ["https://i.postimg.cc/Fz5hSmhB/Opengraph.png"],
   },
   icons: { shortcut: "/favicon.ico" },
@@ -64,10 +61,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <>
       <html>
         <body>
-            <div className="flex h-screen bg-zinc-900 text-zinc-100">
-              {/* Main Content */}
-              <div className="flex-1 flex flex-col bg-zinc-700">{children}</div>
-            </div>
+          <div className="flex h-screen bg-zinc-900 text-zinc-100">
+            {/* Main Content */}
+            <div className="flex-1 flex flex-col bg-zinc-700">{children}</div>
+          </div>
         </body>
       </html>
     </>

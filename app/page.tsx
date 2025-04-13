@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Textarea } from "@/components/ui/textarea"
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Loader2,
   Hash,
@@ -19,11 +19,11 @@ import {
   Send,
   Megaphone,
   Volume2,
-  ArrowLeftToLine
-} from "lucide-react"
-import { useDiscord, type Channel } from "@/lib/hooks/use-discord"
-import { formatDistanceToNow, set } from "date-fns"
-import Image from 'next/image';
+  ArrowLeftToLine,
+} from "lucide-react";
+import { useDiscord, type Channel } from "@/lib/hooks/use-discord";
+import { formatDistanceToNow, set } from "date-fns";
+import Image from "next/image";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -46,11 +46,11 @@ export default function ChatInterface() {
     sendMessage,
     fetchNewMessages,
     setSelectedChannel, // Add this to destructure the setter function
-  } = useDiscord()
+  } = useDiscord();
 
-  const [botToken, setBotToken] = useState("")
-  const [messageInput, setMessageInput] = useState("")
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [botToken, setBotToken] = useState("");
+  const [messageInput, setMessageInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isServerSidebarOpen, setIsServerSidebarOpen] = useState(false);
   const [isChannelSidebarOpen, setIsChannelSidebarOpen] = useState(false);
@@ -80,39 +80,42 @@ export default function ChatInterface() {
   // Handle connect button click
   const handleConnect = () => {
     if (botToken.trim()) {
-      connect(botToken.trim())
+      connect(botToken.trim());
     }
-  }
+  };
 
   // Handle send message
   const handleSendMessage = async () => {
     if (messageInput.trim() && selectedChannel) {
-      const success = await sendMessage(messageInput)
+      const success = await sendMessage(messageInput);
       if (success) {
-        setMessageInput("")
+        setMessageInput("");
       }
     }
-  }
+  };
 
   // Format timestamp
   const formatTimestamp = (timestamp: string) => {
     try {
-      return formatDistanceToNow(new Date(timestamp), { addSuffix: true })
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
     } catch {
-      return timestamp
+      return timestamp;
     }
-  }
+  };
 
   // Group channels by category
-  const groupedChannels = channels.reduce((acc, channel) => {
-    if (channel.type === "category") {
-      acc[channel.id] = {
-        ...channel,
-        children: [],
-      };
-    }
-    return acc;
-  }, {} as Record<string, Channel & { children: Channel[] }>);
+  const groupedChannels = channels.reduce(
+    (acc, channel) => {
+      if (channel.type === "category") {
+        acc[channel.id] = {
+          ...channel,
+          children: [],
+        };
+      }
+      return acc;
+    },
+    {} as Record<string, Channel & { children: Channel[] }>,
+  );
 
   channels.forEach((channel) => {
     if (channel.type !== "category" && channel.parentId) {
@@ -127,7 +130,7 @@ export default function ChatInterface() {
 
   // Include all uncategorized channels
   const uncategorizedChannels = channels.filter(
-    (channel) => channel.type !== "category" && !channel.parentId
+    (channel) => channel.type !== "category" && !channel.parentId,
   );
 
   useEffect(() => {
@@ -139,20 +142,28 @@ export default function ChatInterface() {
     return (
       <div className="flex-1 flex items-center justify-center bg-zinc-800">
         <div className="w-full max-w-md p-6 bg-zinc-900 rounded-lg shadow-lg">
-          <h2 className="text-xl font-bold text-center mb-6 text-white">Connect to Discord Bot</h2>
+          <h2 className="text-xl font-bold text-center mb-6 text-white">
+            Connect to Discord Bot
+          </h2>
           {error && (
-            <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded text-white text-sm">{error}</div>
+            <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded text-white text-sm">
+              {error}
+            </div>
           )}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Bot Token</label>
+              <label className="block text-sm font-medium text-zinc-300 mb-1">
+                Bot Token
+              </label>
               <Input
                 placeholder="Enter your bot token"
                 value={botToken}
                 onChange={(e) => setBotToken(e.target.value)}
                 className="bg-zinc-800 border-zinc-700 text-white"
               />
-              <p className="mt-1 text-xs text-zinc-400">Your token is stored locally and never sent to our servers</p>
+              <p className="mt-1 text-xs text-zinc-400">
+                Your token is stored locally and never sent to our servers
+              </p>
             </div>
             <Button
               onClick={handleConnect}
@@ -171,7 +182,7 @@ export default function ChatInterface() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Chat interface with sidebars
@@ -187,7 +198,9 @@ export default function ChatInterface() {
           >
             Close
           </button>
-          <h2 className="text-white text-lg font-semibold mb-4">Select a Server</h2>
+          <h2 className="text-white text-lg font-semibold mb-4">
+            Select a Server
+          </h2>
           {servers.map((server) => (
             <div
               key={server.id}
@@ -196,7 +209,9 @@ export default function ChatInterface() {
                 setIsServerSidebarOpen(false);
               }}
               className={`h-12 w-12 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transition-all ${
-                selectedServer?.id === server.id ? "bg-indigo-600" : "bg-zinc-800 hover:bg-indigo-500"
+                selectedServer?.id === server.id
+                  ? "bg-indigo-600"
+                  : "bg-zinc-800 hover:bg-indigo-500"
               }`}
             >
               {server.icon ? (
@@ -239,7 +254,9 @@ export default function ChatInterface() {
             <div className="p-2 space-y-4">
               {sortedCategories.map((category) => (
                 <div key={category.id} className="space-y-1">
-                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">{category.name}</h3>
+                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">
+                    {category.name}
+                  </h3>
                   <div className="space-y-1 pl-2">
                     {category.children.map((channel) => (
                       <div
@@ -249,13 +266,23 @@ export default function ChatInterface() {
                           setIsChannelSidebarOpen(false);
                         }}
                         className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
-                          selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                          selectedChannel?.id === channel.id
+                            ? "bg-zinc-700 text-white"
+                            : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
                         }`}
                       >
-                        {channel.type === "text" && <Hash className="h-5 w-5" />}
-                        {channel.type === "voice" && <Volume2 className="h-5 w-5" />}
-                        {channel.type === "announcement" && <Megaphone className="h-5 w-5" />}
-                        <span className="text-xs md:text-sm">{channel.name}</span>
+                        {channel.type === "text" && (
+                          <Hash className="h-5 w-5" />
+                        )}
+                        {channel.type === "voice" && (
+                          <Volume2 className="h-5 w-5" />
+                        )}
+                        {channel.type === "announcement" && (
+                          <Megaphone className="h-5 w-5" />
+                        )}
+                        <span className="text-xs md:text-sm">
+                          {channel.name}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -264,7 +291,9 @@ export default function ChatInterface() {
 
               {uncategorizedChannels.length > 0 && (
                 <div className="space-y-1">
-                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">Channels</h3>
+                  <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">
+                    Channels
+                  </h3>
                   <div className="space-y-1 pl-2">
                     {uncategorizedChannels
                       .filter((channel) => channel.type === "text")
@@ -276,11 +305,15 @@ export default function ChatInterface() {
                             setIsChannelSidebarOpen(false);
                           }}
                           className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
-                            selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                            selectedChannel?.id === channel.id
+                              ? "bg-zinc-700 text-white"
+                              : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
                           }`}
                         >
                           <Hash className="h-5 w-5" />
-                          <span className="text-xs md:text-sm">{channel.name}</span>
+                          <span className="text-xs md:text-sm">
+                            {channel.name}
+                          </span>
                         </div>
                       ))}
                   </div>
@@ -298,7 +331,9 @@ export default function ChatInterface() {
             key={server.id}
             onClick={() => selectServer(server)}
             className={`h-12 w-12 rounded-full flex items-center justify-center text-white font-bold cursor-pointer transition-all ${
-              selectedServer?.id === server.id ? "bg-indigo-600" : "bg-zinc-800 hover:bg-indigo-500"
+              selectedServer?.id === server.id
+                ? "bg-indigo-600"
+                : "bg-zinc-800 hover:bg-indigo-500"
             }`}
           >
             {server.icon ? (
@@ -334,7 +369,9 @@ export default function ChatInterface() {
           <div className="p-2 space-y-4">
             {sortedCategories.map((category) => (
               <div key={category.id} className="space-y-1">
-                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">{category.name}</h3>
+                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">
+                  {category.name}
+                </h3>
                 <div className="space-y-1 pl-2">
                   {category.children.map((channel) => (
                     <div
@@ -344,12 +381,18 @@ export default function ChatInterface() {
                         setIsChannelSidebarOpen(false);
                       }}
                       className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
-                        selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                        selectedChannel?.id === channel.id
+                          ? "bg-zinc-700 text-white"
+                          : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
                       }`}
                     >
                       {channel.type === "text" && <Hash className="h-5 w-5" />}
-                      {channel.type === "voice" && <Volume2 className="h-5 w-5" />}
-                      {channel.type === "announcement" && <Megaphone className="h-5 w-5" />}
+                      {channel.type === "voice" && (
+                        <Volume2 className="h-5 w-5" />
+                      )}
+                      {channel.type === "announcement" && (
+                        <Megaphone className="h-5 w-5" />
+                      )}
                       <span className="text-xs md:text-sm">{channel.name}</span>
                     </div>
                   ))}
@@ -359,7 +402,9 @@ export default function ChatInterface() {
 
             {uncategorizedChannels.length > 0 && (
               <div className="space-y-1">
-                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">Channels</h3>
+                <h3 className="text-xs md:text-sm font-semibold uppercase text-zinc-400 mb-2">
+                  Channels
+                </h3>
                 <div className="space-y-1 pl-2">
                   {uncategorizedChannels
                     .filter((channel) => channel.type === "text")
@@ -371,11 +416,15 @@ export default function ChatInterface() {
                           setIsChannelSidebarOpen(false);
                         }}
                         className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-all ${
-                          selectedChannel?.id === channel.id ? "bg-zinc-700 text-white" : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
+                          selectedChannel?.id === channel.id
+                            ? "bg-zinc-700 text-white"
+                            : "text-zinc-400 hover:bg-zinc-700 hover:text-white"
                         }`}
                       >
                         <Hash className="h-5 w-5" />
-                        <span className="text-xs md:text-sm">{channel.name}</span>
+                        <span className="text-xs md:text-sm">
+                          {channel.name}
+                        </span>
                       </div>
                     ))}
                 </div>
@@ -396,12 +445,19 @@ export default function ChatInterface() {
                 onClick={() => setIsChannelSidebarOpen(true)}
               />
             )}
-            <h2 className="font-semibold text-white text-sm md:text-base">{selectedChannel?.name || "Select a Channel"}</h2>
+            <h2 className="font-semibold text-white text-sm md:text-base">
+              {selectedChannel?.name || "Select a Channel"}
+            </h2>
           </div>
         </header>
 
         {/* Messages */}
-        <ScrollArea className="flex-1 p-4 overflow-y-auto word-wrap" style={{ maxWidth: `calc(100vw - ${isMobile ? '0px' : '72px + 240px'})` }}>
+        <ScrollArea
+          className="flex-1 p-4 overflow-y-auto word-wrap"
+          style={{
+            maxWidth: `calc(100vw - ${isMobile ? "0px" : "72px + 240px"})`,
+          }}
+        >
           {isLoadingMessages ? (
             <div className="flex items-center justify-center h-full">
               <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
@@ -414,12 +470,18 @@ export default function ChatInterface() {
               </div>
             </div>
           ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-zinc-500">No messages in this channel</div>
+            <div className="flex items-center justify-center h-full text-zinc-500">
+              No messages in this channel
+            </div>
           ) : (
             <div className="space-y-4">
               {messages
                 .slice() // Create a shallow copy to avoid mutating the original array
-                .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()) // Sort by timestamp
+                .sort(
+                  (a, b) =>
+                    new Date(a.timestamp).getTime() -
+                    new Date(b.timestamp).getTime(),
+                ) // Sort by timestamp
                 .map((message) => (
                   <div key={message.id} className="flex gap-3">
                     {message.author.avatar ? (
@@ -440,43 +502,58 @@ export default function ChatInterface() {
                         <span className="font-medium text-white">
                           {message.author.username}
                           {message.author.bot && (
-                            <span className="ml-1 text-xs bg-indigo-600 text-white px-1 rounded">BOT</span>
+                            <span className="ml-1 text-xs bg-indigo-600 text-white px-1 rounded">
+                              BOT
+                            </span>
                           )}
                         </span>
-                        <span className="text-xs text-zinc-400">{formatTimestamp(message.timestamp)}</span>
+                        <span className="text-xs text-zinc-400">
+                          {formatTimestamp(message.timestamp)}
+                        </span>
                       </div>
-                      <p className="text-zinc-200 whitespace-pre-wrap word-wrap text-sm md:text-base">{message.content}</p>
+                      <p className="text-zinc-200 whitespace-pre-wrap word-wrap text-sm md:text-base">
+                        {message.content}
+                      </p>
 
                       {/* Render attachments if any */}
-                      {message.attachments && message.attachments.length > 0 && (
-                        <div className="mt-2 space-y-2">
-                          {message.attachments.map((attachment) => (
-                            <div key={attachment.id} className="inline-block">
-                              {attachment.contentType?.startsWith("image/") ? (
-                                <a href={attachment.url} target="_blank" rel="noopener noreferrer">
-                                  <Image
-                                    src={attachment.url || "/placeholder.svg"}
-                                    alt={attachment.name}
-                                    className="max-w-xs max-h-60 rounded-md"
-                                    width={240}
-                                    height={240}
-                                  />
-                                </a>
-                              ) : (
-                                <a
-                                  href={attachment.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2 p-2 bg-zinc-800 rounded-md text-zinc-200 hover:bg-zinc-700"
-                                >
-                                  <Paperclip className="h-4 w-4" />
-                                  <span className="text-xs md:text-sm">{attachment.name}</span>
-                                </a>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      {message.attachments &&
+                        message.attachments.length > 0 && (
+                          <div className="mt-2 space-y-2">
+                            {message.attachments.map((attachment) => (
+                              <div key={attachment.id} className="inline-block">
+                                {attachment.contentType?.startsWith(
+                                  "image/",
+                                ) ? (
+                                  <a
+                                    href={attachment.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    <Image
+                                      src={attachment.url || "/placeholder.svg"}
+                                      alt={attachment.name}
+                                      className="max-w-xs max-h-60 rounded-md"
+                                      width={240}
+                                      height={240}
+                                    />
+                                  </a>
+                                ) : (
+                                  <a
+                                    href={attachment.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 p-2 bg-zinc-800 rounded-md text-zinc-200 hover:bg-zinc-700"
+                                  >
+                                    <Paperclip className="h-4 w-4" />
+                                    <span className="text-xs md:text-sm">
+                                      {attachment.name}
+                                    </span>
+                                  </a>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                     </div>
                   </div>
                 ))}
@@ -488,7 +565,11 @@ export default function ChatInterface() {
         {/* Message Input */}
         <div className="p-4 bg-zinc-800 border-t border-zinc-900 w-full">
           <div className="flex items-center gap-2 bg-zinc-700 rounded-lg p-2">
-            <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-zinc-400 hover:text-white"
+            >
               <PlusCircle className="h-6 w-6" />
             </Button>
             <Textarea
@@ -505,13 +586,25 @@ export default function ChatInterface() {
               disabled={isSendingMessage}
             />
             <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-zinc-400 hover:text-white"
+              >
                 <Gift className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-zinc-400 hover:text-white"
+              >
                 <Paperclip className="h-6 w-6" />
               </Button>
-              <Button variant="ghost" size="icon" className="h-10 w-10 text-zinc-400 hover:text-white">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-10 w-10 text-zinc-400 hover:text-white"
+              >
                 <Smile className="h-6 w-6" />
               </Button>
               <Button
@@ -521,12 +614,16 @@ export default function ChatInterface() {
                 className="h-10 w-10 text-zinc-400 hover:text-white"
                 disabled={isSendingMessage || !messageInput.trim()}
               >
-                {isSendingMessage ? <Loader2 className="h-6 w-6 animate-spin" /> : <Send className="h-6 w-6" />}
+                {isSendingMessage ? (
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                ) : (
+                  <Send className="h-6 w-6" />
+                )}
               </Button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
