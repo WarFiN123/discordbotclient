@@ -183,7 +183,7 @@ export default function ChatInterface() {
     <div className={`flex flex-col h-full ${isMobile ? "" : "md:flex-row"}`}>
       {/* Server List Sidebar for Mobile */}
       {isMobile && isServerSidebarOpen && (
-        <div className="absolute inset-0 z-50 bg-zinc-950 flex flex-col items-center py-3 gap-3 overflow-y-auto">
+        <div className="fixed bottom-0 inset-x-0 z-50 bg-zinc-950 flex flex-col items-center py-3 gap-3 overflow-y-auto">
           <button
             className="absolute top-4 right-4 text-white"
             onClick={() => setIsServerSidebarOpen(false)}
@@ -224,7 +224,7 @@ export default function ChatInterface() {
 
       {/* Channel List Sidebar for Mobile */}
       {isMobile && isChannelSidebarOpen && (
-        <div className="absolute inset-0 z-50 bg-zinc-800 flex flex-col">
+        <div className="fixed bottom-0 inset-x-0 z-50 bg-zinc-800 flex flex-col h-full overflow-y-auto">
           <button
             className="absolute top-4 right-4 text-white"
             onClick={() => setIsChannelSidebarOpen(false)}
