@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Loader2,
   Hash,
@@ -21,6 +20,7 @@ import { useDiscord, type Channel } from "@/lib/hooks/use-discord";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
+import Link from "next/link";
 
 export default function ChatInterface() {
   const {
@@ -154,7 +154,8 @@ export default function ChatInterface() {
                 className="bg-zinc-800 border-zinc-700 text-white"
               />
               <p className="mt-1 text-xs text-zinc-400">
-                Your token is stored locally and never sent to our servers
+                Open source on&nbsp;
+                <Link target="_blank" href="https://github.com/WarFiN123/discordbotclient" className="underline hover:text-white">GitHub</Link>
               </p>
             </div>
             <Button
@@ -564,7 +565,7 @@ export default function ChatInterface() {
             >
               <PlusCircle className="h-6 w-6" />
             </Button>
-            <Textarea
+            <Input
               placeholder={`Message #${selectedChannel?.name || ""}`}
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
