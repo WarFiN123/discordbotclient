@@ -8,10 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Loader2,
   Hash,
-  Users,
-  AtSign,
-  Bell,
-  HelpCircle,
   PlusCircle,
   Gift,
   Smile,
@@ -22,10 +18,8 @@ import {
   ArrowLeftToLine,
 } from "lucide-react";
 import { useDiscord, type Channel } from "@/lib/hooks/use-discord";
-import { formatDistanceToNow, set } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ChatInterface() {
@@ -45,13 +39,11 @@ export default function ChatInterface() {
     selectChannel,
     sendMessage,
     fetchNewMessages,
-    setSelectedChannel, // Add this to destructure the setter function
   } = useDiscord();
 
   const [botToken, setBotToken] = useState("");
   const [messageInput, setMessageInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isServerSidebarOpen, setIsServerSidebarOpen] = useState(false);
   const [isChannelSidebarOpen, setIsChannelSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
