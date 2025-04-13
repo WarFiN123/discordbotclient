@@ -22,13 +22,13 @@ export const metadata = {
     "Uncover it",
   ],
   openGraph: {
-    title: "Uncover it - Static Malware Config Extractor",
+    title: "Discord Bot Client",
     description: "A service that allows you to login as a Discord Bot",
     url: "https://discordbot.uncoverit.org",
-    siteName: "Uncover it",
+    siteName: "Discord Bot Client",
     images: [
       {
-        url: "https://i.postimg.cc/Fz5hSmhB/Opengraph.png",
+        url: "https://i.postimg.cc/kgHNBdJf/output-onlinepngtools.png",
         width: 1200,
         height: 630,
       },
@@ -48,10 +48,10 @@ export const metadata = {
     },
   },
   twitter: {
-    title: "Uncover it",
+    title: "Discord Bot Client",
     card: "summary_large_image",
     description: "A service that allows you to login as a Discord Bot",
-    images: ["https://i.postimg.cc/Fz5hSmhB/Opengraph.png"],
+    images: ["https://i.postimg.cc/kgHNBdJf/output-onlinepngtools.png"],
   },
   icons: { shortcut: "/favicon.ico" },
 };
