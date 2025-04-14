@@ -69,9 +69,15 @@ export default function ChatInterface() {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, [selectedChannel, messages, fetchNewMessages]);
 
+  const discordBotTokenPattern = /[\w-]{24,26}\.[\w-]{6}\.[\w-]{25,110}/;
+
   // Handle connect button click
   const handleConnect = () => {
     if (botToken.trim()) {
+      if (!discordBotTokenPattern.test(botToken.trim())) {
+        alert("Invalid bot token format. Please check and try again.");
+        return;
+      }
       connect(botToken.trim());
     }
   };
