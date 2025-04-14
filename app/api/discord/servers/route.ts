@@ -19,10 +19,10 @@ export async function POST(req: Request) {
     }
 
     // Get all guilds (servers) the bot is in
-    const guilds = client.guilds.cache.map((guild) => ({
+    const guilds = client.guilds.map((guild) => ({
       id: guild.id,
       name: guild.name || "Unknown Server", // Fallback if name is undefined
-      icon: guild.iconURL() || null,
+      icon: guild.iconURL || null,
       memberCount: guild.memberCount,
     }));
 

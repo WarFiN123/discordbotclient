@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     }
 
     // Disconnect the client
-    client.destroy();
+    client.disconnect({ reconnect: false });
 
     // Remove from active connections
     removeActiveClient(token);

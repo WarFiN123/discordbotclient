@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client } from "eris";
 
 // Store active bot connections
 const activeConnections = new Map<string, Client>();
@@ -14,16 +14,11 @@ export async function getActiveClient(token: string): Promise<Client | null> {
 
   // If not, create a new client and connect
   try {
-    const client = new Client({
-      intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-      ],
+    const client = new Client(token, {
+      intents: ["guilds", "guildMessages", "messageContent", "guildMembers"], // Removed voice-related intents
     });
 
-    await client.login(token);
+    await client.connect();
     activeConnections.set(token, client);
     return client;
   } catch (error) {
@@ -39,7 +34,7 @@ export function removeActiveClient(token: string): boolean {
   if (activeConnections.has(token)) {
     const client = activeConnections.get(token);
     if (client) {
-      client.destroy();
+      client.disconnect({ reconnect: false });
     }
     activeConnections.delete(token);
     return true;

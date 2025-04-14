@@ -21,9 +21,9 @@ export async function POST(req: Request) {
     }
 
     // Get the channel
-    const channel = await client.channels.fetch(channelId);
+    const channel = client.getChannel(channelId);
 
-    if (!channel || !channel.isTextBased()) {
+    if (!channel || channel.type !== 0) {
       return NextResponse.json(
         { error: "Text channel not found" },
         { status: 404 },
@@ -31,24 +31,24 @@ export async function POST(req: Request) {
     }
 
     // Fetch messages
-    const messages = await channel.messages.fetch({ limit });
+    const messages = await channel.getMessages({ limit });
 
     // Format messages
-    const formattedMessages = Array.from(messages.values()).map((msg) => ({
+    const formattedMessages = messages.map((msg) => ({
       id: msg.id,
       content: msg.content,
       author: {
         id: msg.author.id,
         username: msg.author.username,
-        avatar: msg.author.displayAvatarURL(),
+        avatar: msg.author.avatarURL,
         bot: msg.author.bot,
       },
-      timestamp: msg.createdAt.toISOString(),
+      timestamp: new Date(msg.timestamp).toISOString(),
       attachments: msg.attachments.map((a) => ({
         id: a.id,
         url: a.url,
-        name: a.name,
-        contentType: a.contentType,
+        name: a.filename,
+        contentType: a.content_type,
       })),
     }));
 
