@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getActiveClient, removeActiveClient } from "@/lib/discord-client";
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
