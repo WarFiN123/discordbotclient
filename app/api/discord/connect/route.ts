@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client } from "eris";
 
 // Store active bot connections (in a real app, you'd use a more persistent solution)
 const activeConnections = new Map();
@@ -23,19 +23,14 @@ export async function POST(req: Request) {
       });
     }
 
-    // Create a new Discord client
-    const client = new Client({
-      intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-      ],
+    // Create a new Eris client
+    const client = new Client(token, {
+      intents: ["guilds", "guildMessages", "messageContent", "guildMembers"],
     });
 
     // Connect to Discord
     try {
-      await client.login(token);
+      await client.connect();
 
       // Store the client instance
       activeConnections.set(token, client);

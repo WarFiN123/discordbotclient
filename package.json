@@ -42,13 +42,12 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
     "date-fns": "^2.30.0",
-    "discord.js": "^14.18.0",
     "embla-carousel-react": "8.5.1",
+    "eris": "^0.16.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
     "next-themes": "^0.4.6",
-    "node-loader": "^2.1.0",
     "react": "^18.0.0",
     "react-day-picker": "8.10.1",
     "react-dom": "^18.0.0",
@@ -59,7 +58,6 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.6",
-    "zlib-sync": "^0.1.9",
     "zod": "^3.24.1"
   },
   "devDependencies": {

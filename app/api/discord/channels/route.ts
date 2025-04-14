@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { ChannelType } from "discord.js";
 import { getActiveClient } from "@/lib/discord-client";
 
 export async function POST(req: Request) {
@@ -22,30 +21,27 @@ export async function POST(req: Request) {
     }
 
     // Get the guild
-    const guild = client.guilds.cache.get(serverId);
+    const guild = client.guilds.get(serverId);
 
     if (!guild) {
       return NextResponse.json({ error: "Server not found" }, { status: 404 });
     }
 
     // Fetch all channels
-    await guild.channels.fetch();
-
-    // Map channels to a simpler format
-    const channels = guild.channels.cache.map((channel) => {
+    const channels = guild.channels.map((channel) => {
       let type = "unknown";
 
-      if (channel.type === ChannelType.GuildText) {
+      if (channel.type === 0) {
         type = "text";
-      } else if (channel.type === ChannelType.GuildVoice) {
+      } else if (channel.type === 2) {
         type = "voice";
-      } else if (channel.type === ChannelType.GuildCategory) {
+      } else if (channel.type === 4) {
         type = "category";
-      } else if (channel.type === ChannelType.GuildAnnouncement) {
+      } else if (channel.type === 5) {
         type = "announcement";
-      } else if (channel.type === ChannelType.GuildStageVoice) {
+      } else if (channel.type === 13) {
         type = "stage";
-      } else if (channel.type === ChannelType.GuildForum) {
+      } else if (channel.type === 15) {
         type = "forum";
       }
 
@@ -53,7 +49,7 @@ export async function POST(req: Request) {
         id: channel.id,
         name: channel.name,
         type,
-        parentId: channel.parentId,
+        parentId: channel.parentID,
       };
     });
 

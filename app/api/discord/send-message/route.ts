@@ -21,10 +21,10 @@ export async function POST(req: Request) {
     }
 
     // Get the channel
-    const channel = await client.channels.fetch(channelId);
+    const channel = client.getChannel(channelId);
 
-    // Ensure the channel is a type that supports the 'send' method
-    if (!channel || !channel.isTextBased() || !("send" in channel)) {
+    // Ensure the channel is a type that supports the 'createMessage' method
+    if (!channel || channel.type !== 0) {
       return NextResponse.json(
         { error: "Text channel not found or unsupported" },
         { status: 404 },
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     }
 
     // Send the message
-    const message = await channel.send(content);
+    const message = await channel.createMessage(content);
 
     return NextResponse.json({
       success: true,
@@ -40,12 +40,12 @@ export async function POST(req: Request) {
         id: message.id,
         content: message.content,
         author: {
-          id: client.user?.id || "unknown",
-          username: client.user?.username || "Unknown Bot",
-          avatar: client.user?.displayAvatarURL?.() || "/placeholder-user.jpg",
+          id: client.user.id,
+          username: client.user.username,
+          avatar: client.user.avatarURL,
           bot: true,
         },
-        timestamp: message.createdAt.toISOString(),
+        timestamp: new Date(message.timestamp).toISOString(),
       },
     });
   } catch (error) {
