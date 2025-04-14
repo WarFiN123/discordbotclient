@@ -4,6 +4,8 @@ import { Client } from "eris";
 // Store active bot connections (in a real app, you'd use a more persistent solution)
 const activeConnections = new Map();
 
+export const runtime = 'edge';
+
 export async function POST(req: Request) {
   try {
     const { token } = await req.json();
