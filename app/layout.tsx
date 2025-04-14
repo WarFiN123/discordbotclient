@@ -5,7 +5,7 @@ export const metadata = {
   alternates: { canonical: "https://www.uncoverit.org" },
   title: {
     default: "Discord Bot Client",
-    template: "Uncover it | %s",
+    template: "Discord Bot Client",
   },
   description: "A service that allows you to login as a Discord Bot",
   keywords: [
