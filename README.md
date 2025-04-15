@@ -7,9 +7,6 @@
 ### Requirements
 
 - [Node.js](https://nodejs.org)
-- C++ Compiler
-- Desktop development with C++ ([Visual Studio Installer](https://visualstudio.microsoft.com/downloads))
-- [node-gyp](https://github.com/nodejs/node-gyp#installation)
 
 ### Steps
 
