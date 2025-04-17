@@ -43,6 +43,7 @@
     "cmdk": "1.0.4",
     "date-fns": "^2.30.0",
     "embla-carousel-react": "8.5.1",
+    "emoji-picker-react": "^4.12.2",
     "eris": "^0.16.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",

@@ -21,6 +21,9 @@ import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false });
 
 export default function ChatInterface() {
   const {
@@ -47,15 +50,14 @@ export default function ChatInterface() {
   const [isServerSidebarOpen, setIsServerSidebarOpen] = useState(false);
   const [isChannelSidebarOpen, setIsChannelSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom(); // Scroll to the bottom when messages are updated
-  }, [messages]); // Ensure this runs when the messages array changes
+  }, [messages]);
 
   // Periodically fetch messages for the selected channel
   useEffect(() => {
@@ -88,8 +90,15 @@ export default function ChatInterface() {
       const success = await sendMessage(messageInput);
       if (success) {
         setMessageInput("");
+        setTimeout(() => {
+          scrollToBottom();
+        }, 100); // Delay to ensure the message is rendered before scrolling
       }
     }
+  };
+
+  const handleEmojiClick = (emojiObject) => {
+    setMessageInput((prev) => prev + emojiObject.emoji);
   };
 
   // Format timestamp
@@ -130,10 +139,6 @@ export default function ChatInterface() {
   const uncategorizedChannels = channels.filter(
     (channel) => channel.type !== "category" && !channel.parentId,
   );
-
-  useEffect(() => {
-    // Removed swipe gesture logic
-  }, []);
 
   // Login screen
   if (!isConnected) {
@@ -571,7 +576,7 @@ export default function ChatInterface() {
         <div className="p-4 bg-zinc-800 border-t border-zinc-900 w-full">
           <div className="flex items-center gap-2 bg-zinc-700 rounded-lg p-2">
             <Button
-              variant="ghost"
+              variant="default"
               size="icon"
               className="h-10 w-10 text-zinc-400 hover:text-white"
             >
@@ -592,31 +597,26 @@ export default function ChatInterface() {
             />
             <div className="flex items-center gap-1">
               <Button
-                variant="ghost"
+                variant="default"
                 size="icon"
                 className="h-10 w-10 text-zinc-400 hover:text-white"
-              >
-                <Gift className="h-6 w-6" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 text-zinc-400 hover:text-white"
-              >
-                <Paperclip className="h-6 w-6" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-10 w-10 text-zinc-400 hover:text-white"
+                onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
               >
                 <Smile className="h-6 w-6" />
               </Button>
+              {isEmojiPickerOpen && (
+                <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-16 right-4'} z-50`}>
+                  <EmojiPicker 
+                    onEmojiClick={handleEmojiClick}
+                    theme="dark"
+                  />
+                </div>
+              )}
               <Button
                 onClick={handleSendMessage}
-                variant="ghost"
+                variant="outline"
                 size="icon"
-                className="h-10 w-10 text-zinc-400 hover:text-white"
+                className="h-10 w-10 text-black"
                 disabled={isSendingMessage || !messageInput.trim()}
               >
                 {isSendingMessage ? (
