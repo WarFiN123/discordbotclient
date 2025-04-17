@@ -19,6 +19,10 @@ export const metadata = {
     "Discord bot hosting",
     "Discord bot management",
     "Discord bot development",
+    "discordbotclient",
+    "online discord bot client",
+    "discord bot client online",
+    "discord bot client website",
     "Uncover it",
   ],
   openGraph: {
