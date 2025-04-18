@@ -2,7 +2,7 @@ import type React from "react";
 import "./globals.css";
 
 export const metadata = {
-  alternates: { canonical: "https://www.uncoverit.org" },
+  alternates: { canonical: "https://discordbot.uncoverit.org" },
   title: {
     default: "Discord Bot Client",
     template: "Discord Bot Client",
