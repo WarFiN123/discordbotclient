@@ -573,7 +573,7 @@ export default function ChatInterface() {
         </ScrollArea>
 
         {/* Message Input */}
-        <div className="p-4 bg-zinc-800 border-t border-zinc-900 w-full">
+        <div className="p-2 bg-zinc-800 border-t border-zinc-900 w-full">
           <div className="flex items-center gap-2 bg-zinc-700 rounded-lg p-2">
             <Button
               variant="default"
@@ -596,22 +596,26 @@ export default function ChatInterface() {
               disabled={isSendingMessage}
             />
             <div className="flex items-center gap-1">
-              <Button
-                variant="default"
-                size="icon"
-                className="h-10 w-10 text-zinc-400 hover:text-white"
-                onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
-              >
-                <Smile className="h-6 w-6" />
-              </Button>
-              {isEmojiPickerOpen && (
-                <div className={`fixed ${isMobile ? 'bottom-0 left-0 right-0' : 'bottom-16 right-4'} z-50`}>
-                  <EmojiPicker 
+                {!isMobile && (
+                <>
+                  <Button
+                  variant="default"
+                  size="icon"
+                  className="h-10 w-10 text-zinc-400 hover:text-white"
+                  onClick={() => setIsEmojiPickerOpen((prev) => !prev)}
+                  >
+                  <Smile className="h-6 w-6" />
+                  </Button>
+                  {isEmojiPickerOpen && (
+                  <div className="fixed bottom-0 left-0 right-0 z-50">
+                    <EmojiPicker 
                     onEmojiClick={handleEmojiClick}
                     theme="dark"
-                  />
-                </div>
-              )}
+                    />
+                  </div>
+                  )}
+                </>
+                )}
               <Button
                 onClick={handleSendMessage}
                 variant="outline"
